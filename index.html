@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Simulador financiero interactivo para evaluar operación, inversión y retorno del proyecto Tequixquiac." />
+  <title>Simulador Financiero Tequixquiac</title>
+  <link rel="stylesheet" href="/simulator.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">TQ</div>
+      <div>
+        <span class="eyebrow">Proyecto Tequixquiac</span>
+        <h1>Simulador financiero</h1>
+      </div>
+    </div>
+    <div class="top-actions">
+      <label class="scenario-select">
+        <span>Escenario</span>
+        <select id="scenarioSelect" aria-label="Escenario activo">
+          <option>Conservador</option>
+          <option selected>Base</option>
+          <option>Alto</option>
+        </select>
+      </label>
+      <button class="btn ghost" id="resetBtn" type="button">Restablecer</button>
+      <button class="btn ghost" id="saveBtn" type="button">Guardar</button>
+      <button class="btn primary" id="presentBtn" type="button">Modo presentación</button>
+    </div>
+  </header>
+
+  <div class="app-shell">
+    <aside class="control-panel" id="controlPanel">
+      <div class="panel-heading">
+        <div>
+          <span class="eyebrow">Panel de control</span>
+          <h2>Variables del proyecto</h2>
+        </div>
+        <span class="live-dot"><i></i> En vivo</span>
+      </div>
+
+      <div class="control-tabs" role="tablist" aria-label="Categorías de variables">
+        <button class="tab active" data-tab="business" type="button">Operación</button>
+        <button class="tab" data-tab="investment" type="button">Locales e inversión</button>
+        <button class="tab" data-tab="finance" type="button">Finanzas</button>
+      </div>
+
+      <section class="tab-panel active" id="tab-business">
+        <p class="panel-help">Activa los giros y ajusta su economía unitaria. Cada cambio se refleja inmediatamente en los resultados.</p>
+        <div id="businessControls" class="accordion-list"></div>
+      </section>
+
+      <section class="tab-panel" id="tab-investment">
+        <p class="panel-help">Configura los rubros compartidos del proyecto. La inversión de cada negocio se controla desde Operación.</p>
+        <div id="investmentControls" class="control-stack"></div>
+      </section>
+
+      <section class="tab-panel" id="tab-finance">
+        <p class="panel-help">Supuestos utilizados para proyectar el flujo y valorar el proyecto a diez años.</p>
+        <div id="financeControls" class="control-stack"></div>
+        <div class="scenario-editor">
+          <h3>Sensibilidad por escenario</h3>
+          <div id="scenarioControls"></div>
+        </div>
+      </section>
+    </aside>
+
+    <main class="dashboard" id="dashboard">
+      <section class="hero-summary">
+        <div>
+          <span class="eyebrow">Lectura ejecutiva</span>
+          <h2 id="decisionTitle">Operación positiva, retorno insuficiente</h2>
+          <p id="decisionText">El proyecto cubre su operación mensual, pero la inversión no se recupera dentro del horizonte evaluado.</p>
+        </div>
+        <div class="presentation-actions">
+          <button class="btn ghost compact" id="printBtn" type="button">Imprimir / PDF</button>
+          <span class="scenario-badge" id="scenarioBadge">Escenario Base</span>
+        </div>
+      </section>
+
+      <section class="kpi-grid" aria-label="Indicadores principales">
+        <article class="kpi-card"><span>Ventas mensuales</span><strong id="kpiSales">—</strong><small id="kpiActive">—</small></article>
+        <article class="kpi-card"><span>EBITDA mensual</span><strong id="kpiEbitda">—</strong><small id="kpiMargin">—</small></article>
+        <article class="kpi-card"><span>Inversión activa</span><strong id="kpiInvestment">—</strong><small id="kpiReturn">—</small></article>
+        <article class="kpi-card"><span>Payback simple</span><strong id="kpiPayback">—</strong><small>sobre EBITDA anual</small></article>
+        <article class="kpi-card emphasis"><span>VAN a 10 años</span><strong id="kpiNpv">—</strong><small id="kpiIrr">—</small></article>
+      </section>
+
+      <section class="visual-grid">
+        <article class="chart-card wide">
+          <div class="card-heading">
+            <div><span class="eyebrow">Composición</span><h3>Aporte mensual por negocio</h3></div>
+            <div class="legend"><span><i class="dot gold"></i>Ventas</span><span><i class="dot green"></i>EBITDA</span></div>
+          </div>
+          <div id="businessChart" class="chart" role="img" aria-label="Gráfica de ventas y EBITDA por negocio"></div>
+        </article>
+
+        <article class="chart-card">
+          <div class="card-heading"><div><span class="eyebrow">Sensibilidad</span><h3>EBITDA por escenario</h3></div></div>
+          <div id="scenarioChart" class="chart compact-chart" role="img" aria-label="Gráfica de EBITDA mensual por escenario"></div>
+        </article>
+
+        <article class="chart-card">
+          <div class="card-heading"><div><span class="eyebrow">Estructura</span><h3>Distribución de inversión</h3></div></div>
+          <div id="investmentChart" class="donut-wrap" role="img" aria-label="Distribución de inversión por naturaleza"></div>
+        </article>
+      </section>
+
+      <section class="detail-grid">
+        <article class="data-card">
+          <div class="card-heading"><div><span class="eyebrow">Economía unitaria</span><h3>Resultado por negocio</h3></div></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Unidad</th><th>Estado</th><th>Ventas / mes</th><th>EBITDA</th><th>Margen</th><th>P. equilibrio</th></tr></thead>
+              <tbody id="businessTable"></tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="data-card">
+          <div class="card-heading"><div><span class="eyebrow">Horizonte 10 años</span><h3>Flujo neto y acumulado</h3></div><div class="legend"><span><i class="dot gold"></i>Neto</span><span><i class="dot navy"></i>Acumulado</span></div></div>
+          <div id="flowChart" class="chart flow-chart" role="img" aria-label="Gráfica de flujo neto y acumulado a diez años"></div>
+        </article>
+      </section>
+
+      <section class="methodology">
+        <div><span class="eyebrow">Alcance</span><h3>Cómo leer este simulador</h3></div>
+        <div class="method-grid">
+          <p><strong>1. Operación</strong><br />Comprueba que cada negocio cubra sus costos y alcance un margen razonable.</p>
+          <p><strong>2. Inversión</strong><br />Sustituye los ejemplos por cotizaciones comparables en alcance, fecha e impuestos.</p>
+          <p><strong>3. Retorno</strong><br />Contrasta VAN, TIR y recuperación bajo escenarios conservador, base y alto.</p>
+          <p><strong>4. Decisión</strong><br />Usa el resultado como prefactibilidad; compleméntalo con mercado, proyecto y revisión fiscal.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="/simulator.js"></script>
+</body>
+</html>
