@@ -216,14 +216,14 @@ function renderBusinessChart(rows) {
   $("#businessChart").innerHTML = svgBarChart(active.map(x => ({ label: x.name, values: [x.sales, x.ebitda] })), { width: 820, height: 330, colors: ["#c7a45a", "#2e7d5b"] });
 }
 function renderScenarioChart(rows) {
-  $("#scenarioChart").innerHTML = svgBarChart(rows.map(x => ({ label: x.name, values: [x.ebitda] })), { width: 430, height: 210, colors: ["#213c61"] });
+  $("#scenarioChart").innerHTML = svgBarChart(rows.map(x => ({ label: x.name, values: [x.ebitda] })), { width: 430, height: 210, colors: ["#292a2e"] });
 }
 function renderInvestmentChart(r) {
   const data = [
-    { label: "Locales y base", value: r.baseInvestment, color: "#14253d" },
+    { label: "Locales y base", value: r.baseInvestment, color: "#111113" },
     { label: "Deporte", value: state.businesses.filter(x => x.active && x.group === "Deporte").reduce((a,x)=>a+x.capex,0), color: "#c7a45a" },
     { label: "Franquicias", value: state.businesses.filter(x => x.active && x.group.startsWith("Franquicia")).reduce((a,x)=>a+x.capex,0), color: "#2e7d5b" },
-    { label: "Comercial propio", value: state.businesses.filter(x => x.active && x.group === "Comercial propio").reduce((a,x)=>a+x.capex,0), color: "#7895b5" },
+    { label: "Comercial propio", value: state.businesses.filter(x => x.active && x.group === "Comercial propio").reduce((a,x)=>a+x.capex,0), color: "#8b8d93" },
   ].filter(x => x.value > 0);
   let start = 0;
   const stops = data.map(x => { const p = r.investment ? x.value/r.investment*100 : 0; const s = `${x.color} ${start}% ${start+p}%`; start += p; return s; }).join(",");
@@ -236,7 +236,7 @@ function renderFlowChart(flow) {
   const net=flow.map((d,i)=>`${x(i)},${y(d.net)}`).join(" "), cum=flow.map((d,i)=>`${x(i)},${y(d.cumulative)}`).join(" ");
   let grid=""; for(let i=0;i<=4;i++){const v=min+range*i/4,yy=y(v);grid+=`<line x1="${m.left}" y1="${yy}" x2="${width-m.right}" y2="${yy}" class="grid-line"/><text x="${m.left-8}" y="${yy+3}" text-anchor="end" class="axis-label">${fmtMoney(v,true)}</text>`;}
   const labels=flow.map((d,i)=>`<text x="${x(i)}" y="${height-14}" text-anchor="middle" class="axis-label">${d.year}</text>`).join("");
-  $("#flowChart").innerHTML=`<svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">${grid}<line x1="${m.left}" y1="${y(0)}" x2="${width-m.right}" y2="${y(0)}" class="zero-line"/><polyline points="${net}" fill="none" stroke="#c7a45a" stroke-width="3"/><polyline points="${cum}" fill="none" stroke="#213c61" stroke-width="3"/>${labels}</svg>`;
+  $("#flowChart").innerHTML=`<svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">${grid}<line x1="${m.left}" y1="${y(0)}" x2="${width-m.right}" y2="${y(0)}" class="zero-line"/><polyline points="${net}" fill="none" stroke="#c7a45a" stroke-width="3"/><polyline points="${cum}" fill="none" stroke="#292a2e" stroke-width="3"/>${labels}</svg>`;
 }
 
 function refresh({ controls = false } = {}) { if (controls) renderControls(); renderDashboard(); }
