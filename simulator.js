@@ -272,7 +272,7 @@ $("#saveBtn").addEventListener("click", () => { localStorage.setItem("tequixquia
 
 async function initialize() {
   try {
-    const response = await fetch("/api/config", { cache: "no-store" });
+    const response = await fetch("https://tequixquiac-simulador-financiero.saltydegu6.chatgpt.site/api/config", { cache: "no-store" });
     if (response.ok) {
       defaults = await response.json();
       state = structuredClone(defaults);
